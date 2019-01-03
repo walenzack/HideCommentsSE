@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         StackExchange Hide Comments
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/walenzack
 // @version      0.2
 // @description  Hide comments on all Stack Exchange sites (except StackOverflow).
 // @author       walen
