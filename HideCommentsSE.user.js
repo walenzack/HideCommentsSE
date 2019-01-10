@@ -26,7 +26,8 @@
   var SE = /(\.stackexchange\.com|superuser\.com|askubuntu\.com|serverfault\.com|stackapps\.com|mathoverflow\.net)/;
   var CHAT = /chat\.stackexchange\.com/;
 
-  var inboxUnreadCounter = document.querySelectorAll(INBOX_BUTTON)[0].children[1];
+  var inboxButton = document.querySelectorAll(INBOX_BUTTON)[0];
+  var inboxUnreadCounter = inboxButton.children[1];
 
   function hideComments() {
     [].forEach.call(
@@ -37,7 +38,14 @@
     );
   }
 
+  function forceLoadInbox() {
+    // Show and immediately hide inbox to force loading
+    inboxButton.click(); // show
+    inboxButton.click(); // hide
+  }
+  
   function hideInboxComments() {
+    forceLoadInbox();
     // TODO Skip forEach if there are no new notifications since last call
     [].forEach.call(
       document.querySelectorAll(INBOX_ITEM),
@@ -62,12 +70,12 @@
     );
   };
 
-  // Main logic
-  if (!SO.test(window.location)) { // Do not hide SO comments
+  /* Main logic */
+  // Hide all comments, except on StackOverflow
+  if (!SO.test(window.location)) {
     hideComments();
   }
-  var timerClearInbox = window.setInterval(
-    hideInboxComments,
-    CLEAR_INBOX_INTERVAL_MILLIS
-  );
+  // Periodically check for and hide new comment notifications, everywhere
+  hideInboxComments();
+  window.setInterval(hideInboxComments, CLEAR_INBOX_INTERVAL_MILLIS);
 })();
