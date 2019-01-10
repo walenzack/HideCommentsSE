@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StackExchange Hide Comments
 // @namespace    https://github.com/walenzack
-// @version      0.2
+// @version      0.3
 // @description  Hide comments on all Stack Exchange sites (except StackOverflow).
 // @author       walen
 // @match        https://*.stackoverflow.com/*
