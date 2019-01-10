@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StackExchange Hide Comments
 // @namespace    https://github.com/walenzack
-// @version      0.3
+// @version      0.4
 // @description  Hide comments on all Stack Exchange sites (except StackOverflow).
 // @author       walen
 // @match        https://*.stackoverflow.com/*
@@ -12,7 +12,7 @@
 // @match        https://stackapps.com/*
 // @match        https://mathoverflow.net/*
 // @grant        window.setInterval
-// @grant        window.clearInterval
+// @grant        window.setTimeout
 // @grant        window.location
 // ==/UserScript==
 
@@ -45,7 +45,6 @@
   }
   
   function hideInboxComments() {
-    forceLoadInbox();
     // TODO Skip forEach if there are no new notifications since last call
     [].forEach.call(
       document.querySelectorAll(INBOX_ITEM),
@@ -75,7 +74,8 @@
   if (!SO.test(window.location)) {
     hideComments();
   }
+  // Force load of inbox div. Wait a bit for the rest of the page to load.
+  window.setTimeout(forceLoadInbox, CLEAR_INBOX_INTERVAL_MILLIS);
   // Periodically check for and hide new comment notifications, everywhere
-  //hideInboxComments(); // TODO First invocation is not working, let the scheduled task do it
   window.setInterval(hideInboxComments, CLEAR_INBOX_INTERVAL_MILLIS);
 })();
