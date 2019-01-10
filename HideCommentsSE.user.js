@@ -76,6 +76,6 @@
     hideComments();
   }
   // Periodically check for and hide new comment notifications, everywhere
-  hideInboxComments();
+  //hideInboxComments(); // TODO First invocation is not working, let the scheduled task do it
   window.setInterval(hideInboxComments, CLEAR_INBOX_INTERVAL_MILLIS);
 })();
