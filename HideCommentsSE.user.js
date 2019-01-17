@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         StackExchange Hide Comments
 // @namespace    https://github.com/walenzack
-// @version      0.4
+// @version      0.5
 // @description  Hide comments on all Stack Exchange sites (except StackOverflow).
 // @author       walen
 // @match        https://*.stackoverflow.com/*
@@ -18,7 +18,6 @@
 
 (function() {
   'use strict';
-  var CLEAR_INBOX_INTERVAL_MILLIS = 5 * 1000;
   var INBOX_BUTTON = 'a[class*="js-inbox-button"]';
   var INBOX_ITEM = 'li[class^="inbox-item"]';
   var COMMENT = 'div[id^="comments"]';
@@ -30,27 +29,25 @@
   var inboxUnreadCounter = inboxButton.children[1];
 
   function hideComments() {
-    [].forEach.call(
-      document.querySelectorAll(COMMENT),
-      function (el) {
-        el.style.display="none";
-      }
-    );
+    if (!SO.test(window.location)) {
+      [].forEach.call(
+        document.querySelectorAll(COMMENT),
+        function (el) {
+          el.style.display="none";
+        }
+      );
+    }
   }
 
-  function forceLoadInbox() {
-    // Show and immediately hide inbox to force loading
-    inboxButton.click(); // show
-    inboxButton.click(); // hide
-  }
-  
   function hideInboxComments() {
+    // Currently this only works if the inbox has already been initialized (i.e. clicked)
+    // TODO Load inbox items async. on page load without clearing initial unread status
     // TODO Skip forEach if there are no new notifications since last call
     [].forEach.call(
       document.querySelectorAll(INBOX_ITEM),
       function (el) {
         var href = el.children[0].href;
-        if (SE.test(href)) {
+        if (SE.test(href)) { // Do not hide notifications for comments on SO posts
           if (!CHAT.test(href)) { // Do not hide chat notifications
             var type = el.children[0].children[1].children[0].children[0].innerText; //hacky af
             if ('comment' === type) {
@@ -70,12 +67,10 @@
   };
 
   /* Main logic */
-  // Hide all comments, except on StackOverflow
-  if (!SO.test(window.location)) {
+  window.setInterval(function() {
+    // Hide comments
     hideComments();
-  }
-  // Force load of inbox div. Wait a bit for the rest of the page to load.
-  window.setTimeout(forceLoadInbox, CLEAR_INBOX_INTERVAL_MILLIS);
-  // Periodically check for and hide new comment notifications, everywhere
-  window.setInterval(hideInboxComments, CLEAR_INBOX_INTERVAL_MILLIS);
+    // Hide comment notifications
+    hideInboxComments();
+  }, 2*1000);
 })();
